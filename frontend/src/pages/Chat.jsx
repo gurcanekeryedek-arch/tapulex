@@ -19,7 +19,7 @@ const initialMessages = [
     {
         id: 1,
         type: 'assistant',
-        content: 'Merhaba! 👋 Ben DocChatAI, şirket dokümanlarınız hakkında sorularınızı yanıtlamak için buradayım. Size nasıl yardımcı olabilirim?',
+        content: 'Merhaba! 👋 Ben TapuLex, şirket dokümanlarınız hakkında sorularınızı yanıtlamak için buradayım. Size nasıl yardımcı olabilirim?',
         timestamp: new Date().toISOString(),
         sources: []
     }
@@ -164,7 +164,7 @@ function Chat() {
                             <div className="message-content">
                                 <div className="message-header">
                                     <span className="message-author">
-                                        {message.type === 'assistant' ? 'DocChatAI' : 'Sen'}
+                                        {message.type === 'assistant' ? 'TapuLex' : 'Sen'}
                                     </span>
                                     <span className="message-time">
                                         {new Date(message.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}

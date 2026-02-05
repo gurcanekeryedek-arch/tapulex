@@ -95,7 +95,7 @@ function Dashboard() {
                     </div>
                     <div>
                         <h2>Hoş geldiniz! 👋</h2>
-                        <p>DocChatAI ile dokümanlarınızı akıllıca sorgulayın.</p>
+                        <p>TapuLex ile dokümanlarınızı akıllıca sorgulayın.</p>
                     </div>
                 </div>
                 <button className="btn btn-primary" onClick={() => window.location.href = '/chat'}>

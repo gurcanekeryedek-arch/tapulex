@@ -1,5 +1,5 @@
 """
-DocChatAI Backend API
+TapuLex Backend API
 FastAPI application for RAG-based document chatbot.
 """
 
@@ -28,13 +28,13 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler."""
-    print("🚀 DocChatAI Backend starting...")
+    print("🚀 TapuLex Backend starting...")
     yield
-    print("👋 DocChatAI Backend shutting down...")
+    print("👋 TapuLex Backend shutting down...")
 
 
 app = FastAPI(
-    title="DocChatAI API",
+    title="TapuLex API",
     description="RAG-based document chatbot API",
     version="1.0.0",
     lifespan=lifespan
@@ -55,7 +55,7 @@ app.add_middleware(
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
-    return {"status": "healthy", "service": "DocChatAI API"}
+    return {"status": "healthy", "service": "TapuLex API"}
 
 
 # ============ Auth Endpoints ============

@@ -19,7 +19,7 @@ def get_supabase() -> Client:
     return create_client(settings.supabase_url, key)
 
 
-SYSTEM_PROMPT = """Sen DocChatAI, şirket dokümanlarından bilgi sağlayan yardımcı bir asistansın.
+SYSTEM_PROMPT = """Sen TapuLex, şirket dokümanlarından bilgi sağlayan yardımcı bir asistansın.
 
 KURALLAR:
 1. SADECE sağlanan bağlam (context) içindeki bilgilere dayanarak yanıt ver.

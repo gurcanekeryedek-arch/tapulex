@@ -12,7 +12,7 @@ const pageTitles = {
 function Header() {
     const location = useLocation()
     const [darkMode, setDarkMode] = useState(true)
-    const title = pageTitles[location.pathname] || 'DocChatAI'
+    const title = pageTitles[location.pathname] || 'TapuLex'
 
     return (
         <header className="header glass-card">

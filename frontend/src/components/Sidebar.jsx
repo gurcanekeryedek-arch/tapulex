@@ -28,7 +28,7 @@ function Sidebar() {
                     <div className="logo-icon">
                         <Sparkles size={24} />
                     </div>
-                    <span className="logo-text">DocChat<span className="logo-accent">AI</span></span>
+                    <span className="logo-text">Tapu<span className="logo-accent">Lex</span></span>
                 </div>
             </div>
 
