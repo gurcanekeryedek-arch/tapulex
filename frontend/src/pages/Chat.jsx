@@ -15,6 +15,8 @@ import {
 } from 'lucide-react'
 import './Chat.css'
 
+import { getChatSuggestions, sendChatMessage, submitFeedback } from '../services/api'
+
 const initialMessages = [
     {
         id: 1,
@@ -53,8 +55,7 @@ function Chat() {
 
     const fetchSuggestions = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/chat/suggestions')
-            const data = await response.json()
+            const data = await getChatSuggestions()
             if (data.suggestions) {
                 setSuggestedQuestions(data.suggestions)
             }
@@ -85,19 +86,12 @@ function Chat() {
 
         try {
             // Call real backend API
-            const response = await fetch('http://localhost:8000/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: userMessage.content,
-                    conversation_history: messages.filter(m => m.type !== 'assistant' || m.id !== 1).map(m => ({
-                        role: m.type === 'user' ? 'user' : 'assistant',
-                        content: m.content
-                    }))
-                })
-            })
+            const conversationHistory = messages.filter(m => m.type !== 'assistant' || m.id !== 1).map(m => ({
+                role: m.type === 'user' ? 'user' : 'assistant',
+                content: m.content
+            }))
 
-            const data = await response.json()
+            const data = await sendChatMessage(userMessage.content, conversationHistory)
 
             const aiResponse = {
                 id: Date.now() + 1,
@@ -138,19 +132,11 @@ function Chat() {
         setShowSources(true)
     }
 
-
-
     const handleFeedback = async (messageId, score) => {
         try {
-            await fetch('http://localhost:8000/api/chat/feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    session_id: "demo-session-" + messageId,
-                    score: score,
-                    comment: score === 1 ? "Kullanıcı bu cevabı beğenmedi" : "Kullanıcı bu cevabı beğendi"
-                })
-            })
+            const sessionId = "demo-session-" + messageId
+            const comment = score === 1 ? "Kullanıcı bu cevabı beğenmedi" : "Kullanıcı bu cevabı beğendi"
+            await submitFeedback(sessionId, score, comment)
             console.log('Feedback submitted')
         } catch (error) {
             console.error('Feedback error:', error)

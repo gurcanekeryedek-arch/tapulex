@@ -16,6 +16,7 @@ import {
     CloudUpload
 } from 'lucide-react'
 import './Documents.css'
+import { getDocuments, uploadDocument, deleteDocument } from '../services/api'
 
 function Documents() {
     const [documents, setDocuments] = useState([])
@@ -33,8 +34,7 @@ function Documents() {
 
     const fetchDocuments = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/documents')
-            const data = await response.json()
+            const data = await getDocuments()
             if (data.success && data.documents) {
                 setDocuments(data.documents.map(doc => ({
                     id: doc.id,
@@ -93,10 +93,6 @@ function Documents() {
             setUploadProgress({ name: fileInfo, progress: 0 })
 
             try {
-                // Create FormData
-                const formData = new FormData()
-                formData.append('file', file)
-
                 // Simulate progress
                 const progressInterval = setInterval(() => {
                     setUploadProgress(prev => {
@@ -106,15 +102,10 @@ function Documents() {
                 }, 150)
 
                 // Upload to backend
-                const response = await fetch('http://localhost:8000/api/documents/upload', {
-                    method: 'POST',
-                    body: formData
-                })
+                const data = await uploadDocument(file)
 
                 clearInterval(progressInterval)
                 setUploadProgress(prev => prev ? { ...prev, progress: 100 } : null)
-
-                const data = await response.json()
 
                 if (data.success) {
                     // Update state with new doc
@@ -143,10 +134,7 @@ function Documents() {
         if (!confirm('Bu dokümanı silmek istediğinize emin misiniz?')) return
 
         try {
-            const response = await fetch(`http://localhost:8000/api/documents/${docId}`, {
-                method: 'DELETE'
-            })
-            const data = await response.json()
+            const data = await deleteDocument(docId)
             if (data.success) {
                 setDocuments(prev => prev.filter(d => d.id !== docId))
             }

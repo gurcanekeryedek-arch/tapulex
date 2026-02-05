@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 // Auth
 export async function login(email, password) {
@@ -57,5 +57,25 @@ export async function getChatSuggestions() {
 // Dashboard
 export async function getDashboardStats() {
     const response = await fetch(`${API_BASE}/dashboard/stats`);
+    return response.json();
+}
+
+export async function getRecentDocuments() {
+    const response = await fetch(`${API_BASE}/dashboard/recent-documents`);
+    return response.json();
+}
+
+export async function getRecentQuestions() {
+    const response = await fetch(`${API_BASE}/dashboard/recent-questions`);
+    return response.json();
+}
+
+// Feedback
+export async function submitFeedback(sessionId, score, comment) {
+    const response = await fetch(`${API_BASE}/chat/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId, score, comment })
+    });
     return response.json();
 }

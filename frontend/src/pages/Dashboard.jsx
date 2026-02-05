@@ -12,6 +12,8 @@ import {
 } from 'lucide-react'
 import './Dashboard.css'
 
+import { getDashboardStats, getRecentDocuments, getRecentQuestions } from '../services/api'
+
 function Dashboard() {
     const [statsData, setStatsData] = useState(null)
     const [recentDocs, setRecentDocs] = useState([])
@@ -22,15 +24,11 @@ function Dashboard() {
         const fetchDashboardData = async () => {
             try {
                 // Fetch stats, recent docs and questions in parallel
-                const [statsRes, docsRes, questionsRes] = await Promise.all([
-                    fetch('http://localhost:8000/api/dashboard/stats'),
-                    fetch('http://localhost:8000/api/dashboard/recent-documents'),
-                    fetch('http://localhost:8000/api/dashboard/recent-questions')
+                const [stats, docs, questions] = await Promise.all([
+                    getDashboardStats(),
+                    getRecentDocuments(),
+                    getRecentQuestions()
                 ])
-
-                const stats = await statsRes.json()
-                const docs = await docsRes.json()
-                const questions = await questionsRes.json()
 
                 setStatsData(stats)
                 setRecentDocs(docs.documents || [])
