@@ -137,3 +137,9 @@ class DashboardStats(BaseModel):
     accuracy_rate: float = 98.5
     documents_this_week: int = 0
     chats_today: int = 0
+
+
+class FeedbackRequest(BaseModel):
+    session_id: str
+    score: int = Field(..., ge=1, le=5)
+    comment: Optional[str] = None

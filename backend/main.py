@@ -14,7 +14,7 @@ from models import (
     LoginRequest, LoginResponse,
     DocumentResponse, DocumentListResponse,
     ChatRequest, ChatResponse, NoSourceResponse,
-    DashboardStats, BaseResponse
+    DashboardStats, BaseResponse, FeedbackRequest
 )
 from services import documents as doc_service
 from services import embeddings as embed_service
@@ -198,6 +198,17 @@ async def get_suggestions():
     """Get suggested questions based on indexed documents."""
     suggestions = await chat_service.get_suggested_questions("00000000-0000-0000-0000-000000000001")
     return {"suggestions": suggestions}
+
+
+@app.post("/api/chat/feedback")
+async def submit_feedback(request: FeedbackRequest):
+    """Submit user feedback for a chat session."""
+    success = await db_service.save_feedback(
+        session_id=request.session_id,
+        score=request.score,
+        comment=request.comment
+    )
+    return BaseResponse(success=success, message="Geri bildirim kaydedildi" if success else "Hata oluştu")
 
 
 # ============ Dashboard Endpoints ============

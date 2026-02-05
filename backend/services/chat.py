@@ -12,6 +12,8 @@ from config import get_settings
 def get_settings_fresh():
     return get_settings()
 
+from services import embeddings as embed_service
+
 def get_supabase() -> Client:
     """Get Supabase client instance with service role key."""
     settings = get_settings_fresh()
@@ -37,12 +39,36 @@ FORMAT:
 
 async def search_chunks_by_text(query: str, org_id: str, limit: int = 5) -> List[Dict[str, Any]]:
     """
-    Search for document chunks using text similarity.
-    Supports basic keyword matching.
+    Search for document chunks using vector similarity first,
+    then fallback to keyword matching if needed.
     """
     supabase = get_supabase()
     
     try:
+        # 1. Try Vector Search (Semantic Search)
+        # This gives us the "Real Accuracy Score" based on cosine similarity
+        vector_results = await embed_service.search_similar_chunks(
+            query=query,
+            org_id=org_id,
+            limit=limit,
+            threshold=0.5  # Minimum similarity threshold (50%)
+        )
+        
+        if vector_results:
+            # Add metadata and format score
+            for chunk in vector_results:
+                if "metadata" not in chunk or chunk["metadata"] is None:
+                    chunk["metadata"] = {}
+                # Ensure filename is present
+                chunk["metadata"]["filename"] = chunk.get("filename", "Bilinmeyen")
+                # Normalize score (0-1 -> 0-100%)
+                chunk["similarity"] = chunk.get("similarity", 0)
+            
+            return vector_results
+
+        # 2. Fallback: Keyword Search (if vector search returns nothing)
+        print("Vector search returned no results, falling back to keyword search...")
+        
         # Split query into words to search for keywords
         keywords = [word.strip() for word in query.split() if len(word.strip()) > 2]
         
@@ -52,12 +78,12 @@ async def search_chunks_by_text(query: str, org_id: str, limit: int = 5) -> List
                 .select("*, documents!inner(filename)")\
                 .limit(limit)\
                 .execute()
-            return result.data or []
+            data = result.data or []
+            for item in data:
+                item["similarity"] = 0.1 # Low score for random fallback
+            return data
 
         # Try to find chunks containing any of the keywords
-        # Supabase doesn't easily support multiple ILIKEs in one call with OR without custom SQL
-        # So we'll just search for the first 2 keywords and combine
-        
         all_matches = []
         for kw in keywords[:2]:
             result = supabase.table("document_chunks")\
@@ -70,28 +96,23 @@ async def search_chunks_by_text(query: str, org_id: str, limit: int = 5) -> List
         
         # Deduplicate matches by ID
         unique_matches = {m["id"]: m for m in all_matches}.values()
-        
         chunks = list(unique_matches)[:limit]
         
-        # If no matches found with keywords, return most recent
-        if not chunks:
-            result = supabase.table("document_chunks")\
-                .select("*, documents!inner(filename)")\
-                .limit(limit)\
-                .execute()
-            chunks = result.data or []
-        
-        # Add filename to metadata
+        # Add filename and dummy score for keyword matches
         for chunk in chunks:
             if "documents" in chunk and chunk["documents"]:
                 if "metadata" not in chunk or chunk["metadata"] is None:
                     chunk["metadata"] = {}
                 chunk["metadata"]["filename"] = chunk["documents"].get("filename", "Bilinmeyen")
+            
+            # Keyword match gets a flat generic score since we can't calculate vector similarity easily here
+            chunk["similarity"] = 0.45 
         
         return chunks
         
     except Exception as e:
         print(f"Search chunks error: {e}")
+        # Last resort fallback
         return []
 
 
@@ -180,13 +201,16 @@ def build_sources(chunks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         text = chunk.get("text", "")
         excerpt = text[:200] + "..." if len(text) > 200 else text
         
+        # Use actual similarity score if available (default to 0.5 for fallback matches)
+        similarity = chunk.get("similarity", 0.5)
+        
         sources.append({
             "document_id": doc_id,
             "filename": metadata.get("filename") or "Bilinmeyen",
             "page": metadata.get("page", 1),
             "section": metadata.get("section_title"),
             "excerpt": excerpt,
-            "relevance_score": 0.9
+            "relevance_score": round(similarity, 2)
         })
     return sources
 

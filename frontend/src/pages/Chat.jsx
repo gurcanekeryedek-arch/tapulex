@@ -140,6 +140,23 @@ function Chat() {
 
 
 
+    const handleFeedback = async (messageId, score) => {
+        try {
+            await fetch('http://localhost:8000/api/chat/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: "demo-session-" + messageId,
+                    score: score,
+                    comment: score === 1 ? "Kullanıcı bu cevabı beğenmedi" : "Kullanıcı bu cevabı beğendi"
+                })
+            })
+            console.log('Feedback submitted')
+        } catch (error) {
+            console.error('Feedback error:', error)
+        }
+    }
+
     return (
         <div className="chat-page">
             <div className={`chat-container ${showSources ? 'with-sources' : ''}`}>
@@ -187,13 +204,21 @@ function Chat() {
                                 )}
                                 {message.type === 'assistant' && (
                                     <div className="message-actions">
-                                        <button className="action-btn" title="Kopyala">
+                                        <button className="action-btn" title="Kopyala" onClick={() => navigator.clipboard.writeText(message.content)}>
                                             <Copy size={14} />
                                         </button>
-                                        <button className="action-btn" title="Beğen">
+                                        <button
+                                            className="action-btn"
+                                            title="Beğen"
+                                            onClick={() => handleFeedback(message.id, 5)}
+                                        >
                                             <ThumbsUp size={14} />
                                         </button>
-                                        <button className="action-btn" title="Beğenme">
+                                        <button
+                                            className="action-btn"
+                                            title="Beğenme"
+                                            onClick={() => handleFeedback(message.id, 1)}
+                                        >
                                             <ThumbsDown size={14} />
                                         </button>
                                         <button className="action-btn" title="Yeniden oluştur">
