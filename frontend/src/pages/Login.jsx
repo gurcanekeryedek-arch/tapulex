@@ -5,8 +5,8 @@ import logo from '../assets/logo.png'
 import './Login.css'
 
 function Login() {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('admin@admin.com')
+    const [password, setPassword] = useState('1')
     const [showPassword, setShowPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const { login } = useContext(AuthContext)
