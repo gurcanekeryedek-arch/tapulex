@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react'
-import { Mail, Lock, Eye, EyeOff, Sparkles, ArrowRight } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { AuthContext } from '../App'
+import logo from '../assets/logo.png'
 import './Login.css'
 
 function Login() {
@@ -33,11 +34,8 @@ function Login() {
             <div className="login-container animate-slide-up">
                 {/* Logo Section */}
                 <div className="login-logo">
-                    <div className="logo-glow">
-                        <Sparkles size={32} />
-                    </div>
-                    <h1>DocChat<span className="text-gradient">AI</span></h1>
-                    <p>Şirket dokümanlarınızla akıllı sohbet</p>
+                    <img src={logo} alt="TapuLex Logo" className="login-logo-img" />
+                    <p>Tapu ve Kadastro Mevzuat Rehberi</p>
                 </div>
 
                 {/* Login Form */}

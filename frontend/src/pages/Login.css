@@ -65,18 +65,12 @@
     margin-bottom: 32px;
 }
 
-.logo-glow {
-    width: 72px;
-    height: 72px;
-    background: var(--gradient-primary);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    color: white;
-    box-shadow: 0 0 40px rgba(139, 92, 246, 0.5);
-    animation: float 4s ease-in-out infinite;
+.login-logo-img {
+    height: 120px;
+    width: auto;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3));
+    mix-blend-mode: screen;
 }
 
 .login-logo h1 {
