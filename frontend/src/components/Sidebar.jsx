@@ -4,12 +4,12 @@ import {
     FileText,
     MessageSquare,
     Settings,
-    LogOut,
-    Sparkles
+    LogOut
 } from 'lucide-react'
 import { useContext } from 'react'
 import { AuthContext } from '../App'
 import './Sidebar.css'
+import logo from '../assets/logo.png'
 
 const menuItems = [
     { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -25,10 +25,7 @@ function Sidebar() {
         <aside className="sidebar">
             <div className="sidebar-header">
                 <div className="logo">
-                    <div className="logo-icon">
-                        <Sparkles size={24} />
-                    </div>
-                    <span className="logo-text">Tapu<span className="logo-accent">Lex</span></span>
+                    <img src={logo} alt="TapuLex Logo" className="logo-img" />
                 </div>
             </div>
 
