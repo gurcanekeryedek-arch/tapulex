@@ -1,0 +1,14 @@
+.layout-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    transition: margin-left var(--transition-normal);
+}
+
+@media (max-width: 1024px) {
+    .layout-content {
+        margin-left: 0;
+    }
+}
